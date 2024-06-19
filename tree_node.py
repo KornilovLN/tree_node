@@ -92,6 +92,18 @@ class TreeNode:
     # Создаем папку для текущего узла и страницу в нем
     def create_html_file(self, node, path, parent_file_name):   
 
+        # Формируем путь к файлу с исходным текстом
+        source_text_path = os.path.join(os.path.dirname(__file__), "source_texts", f"{node.file_name}.txt")
+        source_text = ""  # Инициализируем source_text с пустой строкой
+
+        # Проверяем, существует ли файл с исходным текстом
+        if os.path.isfile(source_text_path):
+            # Читаем содержимое файла с исходным текстом
+            with open(source_text_path, "r", encoding="utf-8") as file:
+                source_text = file.read()
+
+
+
         # Формируем относительный путь к styles/styles.css
         # (Для случая first.html не ставим ../ в начале)
         style_p = ""
@@ -168,12 +180,22 @@ class TreeNode:
         
         content += "<br>\n"
 
+
+
         # Формируем относительный путь к возврату назад 
         if parent_file_name:
             content += f'<a href="../{parent_file_name}.html">Назад</a><br>\n'
 
         content += f'<a href="{root_path}">На главную</a><br>\n'    
         
+
+        # --------------------------------------
+        # Вставляем содержимое текстового файла
+        # Вставляем исходный текст в HTML-файл
+        # --------------------------------------
+        content += f"\n\n<div>{source_text}</div>\n"
+
+
 
         # Формируем ссылки на скрипты, которые лежат в директории scripts
         pscr = 'scripts/script_sidebar_menu.js'
