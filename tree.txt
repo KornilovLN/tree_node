@@ -1,0 +1,44 @@
+.
+├── first
+│   ├── first.html
+│   ├── scripts
+│   │   ├── foother.js
+│   │   ├── script_header_menu.js
+│   │   ├── script_menu.js
+│   │   ├── script_page_links.js
+│   │   └── script_sidebar_menu.js
+│   ├── second
+│   │   ├── fifth
+│   │   │   ├── fifth.html
+│   │   │   ├── sevent
+│   │   │   │   └── sevent.html
+│   │   │   └── sext
+│   │   │       └── sext.html
+│   │   ├── fourth
+│   │   │   └── fourth.html
+│   │   └── second.html
+│   ├── styles
+│   │   └── style.css
+│   └── third
+│       └── third.html
+├── LICENSE
+├── materials
+│   ├── about.txt
+│   ├── selfdoc.txt
+│   ├── style.css
+│   └── techinfo.txt
+├── __pycache__
+│   ├── utils.cpython-312.pyc
+│   └── utils.cpython-38.pyc
+├── README.md
+├── scripts
+│   ├── foother.js
+│   ├── script_header_menu.js
+│   ├── script_menu.js
+│   ├── script_page_links.js
+│   └── script_sidebar_menu.js
+├── tree_node.py
+├── tree.txt
+└── utils.py
+
+12 directories, 29 files

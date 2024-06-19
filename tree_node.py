@@ -4,6 +4,7 @@
 import os
 import sys
 import platform
+import shutil
 
 import utils
 
@@ -14,6 +15,10 @@ styles_css_path = os.path.join(os.path.dirname(__file__), 'materials', 'style.cs
 # Читаем содержимое файла styles.css в переменную для дальнейшего переноса
 # его в папку styles генерируемого проекта
 CSS = utils.read_css_file(styles_css_path)
+
+
+# Путь к директории со скриптами в текущей директории - там, где и tree_node
+scripts_dir = os.path.join(os.path.dirname(__file__), 'scripts')
 
 
 class TreeNode:
@@ -27,11 +32,14 @@ class TreeNode:
 
         # Сразу создаем директорию и файл стилей корневого узла
         if file_name == "first":
-            self.create_styles_directory_and_file()
+            self.create_styles_directory_and_file(file_name)
 
+        # Определяем путь к папке scripts в текущей директории
+        #scripts_dir = os.path.join(os.path.dirname(__file__), 'scripts')
+        
 
     # Создаем директорию и файл стилей корневого узла
-    def create_styles_directory_and_file(self):
+    def create_styles_directory_and_file(self, file_name):
         # Определяем путь к директории и файлу
         styles_dir = os.path.join(self.file_name, 'styles')
         style_file = os.path.join(styles_dir, 'style.css')
@@ -53,6 +61,14 @@ class TreeNode:
             print(f"File 'style.css' not finded at {style_file}")
         #    print(f"File 'style.css' already exists at {style_file}")
 
+        '''
+        # Получаем путь к корневой папке first
+        first_dir = os.path.dirname(file_name)
+        # Создаем путь к папке scripts в корневой папке first
+        dest_scripts_dir = os.path.join(first_dir, 'scripts')
+        # Копируем папку scripts в корневую папку first
+        shutil.copytree(scripts_dir, dest_scripts_dir)
+        '''
 
     # Создаем HTML файл для текущего узла
     def pre_order(self, node, path="", parent_file_name="", level=0):
@@ -192,9 +208,6 @@ class TreeNode:
        
 </body>
 </html>'''
-
-
-
         # Создаем директорию, если ее нет
         full_path = os.path.join(path, node.file_name)
         if not os.path.exists(full_path):
@@ -212,7 +225,27 @@ class TreeNode:
 
 #----------------------------------------------------------------------
 
+# Копирование папки scripts с содержимым в папку сайта first
+def copy_scripts_to_first_dir():
+    # Получаем путь к корневой папке first
+    first_dir = os.path.join(os.getcwd(), 'first')
+
+    # Создаем путь к папке scripts в корневой папке first
+    dest_scripts_dir = os.path.join(first_dir, 'scripts')
+
+    # Определяем путь к исходной папке scripts
+    scripts_dir = os.path.join(os.path.dirname(__file__), 'scripts')
+
+    # Удаляем существующую папку scripts (если она существует)
+    if os.path.exists(dest_scripts_dir):
+        shutil.rmtree(dest_scripts_dir)
+
+    # Копируем папку scripts в корневую папку first
+    shutil.copytree(scripts_dir, dest_scripts_dir)
+
+#----------------------------------------------------------------------
 def main():
+
     # Создаем дерево сайта и его каталогов
     tree = TreeNode("Главная страница", "first")                 
     tree.left = TreeNode("Раздел (L)", "second")           
@@ -224,6 +257,10 @@ def main():
 
     # Генерация HTML файлов по всему дереву
     tree.pre_order(tree)  
+
+    # Копирование папки scripts с содержимым в папку сайта first
+    copy_scripts_to_first_dir()
+     
 
 if __name__ == "__main__":
 
