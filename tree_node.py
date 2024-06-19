@@ -190,6 +190,8 @@ class TreeNode:
 
 
 
+        # Пока запрещаем скрипты
+        """
         # Формируем ссылки на скрипты, которые лежат в директории scripts
         pscr = 'scripts/script_sidebar_menu.js'
         pth=""
@@ -202,7 +204,8 @@ class TreeNode:
         if node.level > 0:    
             pth = '../'*(path.count(os.sep)+1)
         content += '\n<script src="'+pth+pscr+'"></script>\n'
-
+        """
+        
         # Закрываем оборваную часть тела страницы
         content +=f'''
             </div>
