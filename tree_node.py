@@ -38,8 +38,6 @@ class TreeNode:
         if file_name == "first":
             self.create_styles_directory_and_file(file_name)
 
-        # Определяем путь к папке scripts в текущей директории
-        #scripts_dir = os.path.join(os.path.dirname(__file__), 'scripts')
         
 
     # Создаем директорию и файл стилей корневого узла
@@ -65,14 +63,7 @@ class TreeNode:
             print(f"File 'style.css' not finded at {style_file}")
         #    print(f"File 'style.css' already exists at {style_file}")
 
-        '''
-        # Получаем путь к корневой папке first
-        first_dir = os.path.dirname(file_name)
-        # Создаем путь к папке scripts в корневой папке first
-        dest_scripts_dir = os.path.join(first_dir, 'scripts')
-        # Копируем папку scripts в корневую папку first
-        shutil.copytree(scripts_dir, dest_scripts_dir)
-        '''
+
 
     # Создаем HTML файл для текущего узла
     def pre_order(self, node, path="", parent_file_name="", level=0):
@@ -88,6 +79,8 @@ class TreeNode:
                 self.pre_order(node.left, os.path.join(path, node.file_name), node.file_name, level + 1)
             if node.right:
                 self.pre_order(node.right, os.path.join(path, node.file_name), node.file_name, level + 1)
+
+
 
     # Создаем папку для текущего узла и страницу в нем
     def create_html_file(self, node, path, parent_file_name):   
