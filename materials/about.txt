@@ -1,0 +1,10 @@
+        """
+            _________________________________
+
+            author: Kornilovstar
+                    class  8
+                    school 242
+            e-mail: ln.Kornilovstar@gmail.com
+            github: github.com/KornilovLN
+            _________________________________
+        """

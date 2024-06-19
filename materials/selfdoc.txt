@@ -1,0 +1,39 @@
+        ''' 
+           ======================================================           
+           Демонстрационная программа динамического создания HTML
+            страниц из дерева каталогов с использованием
+            класса TreeNode
+           Программа запускается как python tree_node.py
+            и создает общий каталог first (с файлом first.html),
+            в котором будут созданы вложенные одна в одну 
+            директории second, third, fourth, fifth, sext, sevent,
+           Каталог styles и файл style.css также будут созданы в
+            корневом каталоге first.
+
+           Скелет программы примерно такой:
+
+            # База разработки
+            # с созданием и обходом дерева узлов и файлов
+            class TreeNode:
+                def __init__(self, value):
+                    self.value = value
+                    self.left = None
+                    self.right = None
+                    
+                def pre_order(self, node):
+                    if node:
+                        print(node.value)
+                        self.pre_order(node.left)
+                        self.pre_order(node.right)    
+
+            # создаем уровни дерева        
+            tree = TreeNode("первый")
+            tree.left = TreeNode("второй")
+            tree.right = TreeNode("третий")
+            tree.left.left = TreeNode("четвертый")
+            tree.left.right = TreeNode("пятый")
+
+            # выводим значения узлов дерева
+            tree.pre_order(tree)  
+           ======================================================
+        '''
