@@ -205,7 +205,7 @@ class TreeNode:
             pth = '../'*(path.count(os.sep)+1)
         content += '\n<script src="'+pth+pscr+'"></script>\n'
         """
-        
+
         # Закрываем оборваную часть тела страницы
         content +=f'''
             </div>
@@ -265,6 +265,23 @@ def copy_scripts_to_first_dir():
     # Копируем папку scripts в корневую папку first
     shutil.copytree(scripts_dir, dest_scripts_dir)
 
+def copy_icons_to_first_dir():
+    # Получаем путь к корневой папке first
+    first_dir = os.path.join(os.getcwd(), 'first')
+
+    # Определяем путь к исходной папке icons
+    icons_dir = os.path.join(os.path.dirname(__file__), 'icons')
+
+    # Определяем путь к целевой папке icons в корневой папке first
+    dest_icons_dir = os.path.join(first_dir, 'icons')
+
+    # Удаляем существующую папку icons (если она существует)
+    if os.path.exists(dest_icons_dir):
+        shutil.rmtree(dest_icons_dir)
+
+    # Копируем папку icons в корневую папку first
+    shutil.copytree(icons_dir, dest_icons_dir)
+
 #----------------------------------------------------------------------
 def main():
 
@@ -282,6 +299,9 @@ def main():
 
     # Копирование папки scripts с содержимым в папку сайта first
     copy_scripts_to_first_dir()
+
+    # Копирование папки icons с содержимым в папку сайта first
+    copy_icons_to_first_dir()
      
 
 if __name__ == "__main__":

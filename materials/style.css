@@ -34,11 +34,14 @@ footer {
 
 }
 
+
 header .container,
 footer .container {
     display: flex;
     align-items: center;
     height: 100%;
+    width: 100%;
+    
 }
 
 .h2 {
@@ -50,10 +53,10 @@ footer .container {
 }
 
 
-header .container {
+header, footer {
     display: flex;
     align-items: center;
-/*    height: 70px; */ /* Установите желаемую высоту для header */
+    /*width: 100%;*/
 }
 
 
