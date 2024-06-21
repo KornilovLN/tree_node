@@ -24,7 +24,10 @@ sidebar {
     background: #dbda74;
     height: 300px;
     border: 2px solid #7c7c55; /* Добавляем бордер */
+}
 
+.main-content p i {
+    font-size: 0.9em;
 }
 
 footer {
