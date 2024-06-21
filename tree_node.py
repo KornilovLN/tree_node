@@ -96,6 +96,15 @@ class TreeNode:
                 source_text = file.read()
 
 
+        # Формируем относительный путь к файлу иконки
+        icon_path = ""
+        if node.level > 0:
+            icon_path = "../" * node.level
+        icon_path += "icons/ivl.png"
+
+        # Добавляем тег <img> с относительным путем к иконке в содержимое страницы
+        # content += f'<div class="logo"><img src="{icon_path}" alt="Логотип"></div>'
+
 
         # Формируем относительный путь к styles/styles.css
         # (Для случая first.html не ставим ../ в начале)
@@ -136,15 +145,16 @@ class TreeNode:
 
     <header>
         <div class="container">
-            <img src="icons/ivl.png" alt="Логотип" />
-                <nav>             
-                    <ul>
-                    <li><a href="{root_path}"><h2>На главную</h2></a></li>
-                    <li><a href="{back_path}"><h2>Назад</h2></a></li>
-                    <li><a href="#" data-url="contacts.html"><h2>Контакты</h2></a></li>
-                    </ul>
-                </nav>
-          </div>
+            <img src="{icon_path}" alt="Логотип" />
+              
+            <nav>             
+                <ul>
+                <li><a href="{root_path}"><h2>На главную</h2></a></li>
+                <li><a href="{back_path}"><h2>Назад</h2></a></li>
+                <li><a href="#" data-url="contacts.html"><h2>Контакты</h2></a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <div class="container">        
