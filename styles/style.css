@@ -1,23 +1,31 @@
+:root {
+    --max-width: 1700px; /* Устанавливает максимальную ширину контейнеров */
+}
+
+/* Импортируем шрифт из внешнего источника (например, Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+
 html, body {
     height: 100%;
     margin: 10;
-    background-color: #c4c0b6; /* Цвет фона для всего окна */
+    background-color: #c5be7f; /* Цвет фона для всего окна */
+    font-family: 'Roboto', sans-serif;
 }
 
 header {
-    background: #B0DDDD;
+    background: #b4d6e5;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 0; /* Добавляем небольшой отступ сверху и снизу */
-    border: 2px solid #74a2c0; /* Добавляем бордер */
+    border: 2px solid #9bbdd3; /* Добавляем бордер */
 
 }
 
 sidebar {
     height: 300px;
     border: 2px solid #7c7c55; /* Добавляем бордер */
-
 }
 
 .main {
@@ -31,10 +39,12 @@ sidebar {
 }
 
 footer {
-    background: #b4b69b;
-    height: 70px;
-    border: 2px solid #aaaa7d; /* Добавляем бордер */
-
+    background: #c4d3b6;
+    display: flex;
+    align-items: left;
+    justify-content: space-between;
+    padding: 10px 0; /* Добавляем небольшой отступ сверху и снизу */
+    border: 2px solid #a4a396;  /* Добавляем бордер */
 }
 
 
@@ -43,8 +53,9 @@ footer .container {
     display: flex;
     align-items: center;
     height: 100%;
-    width: 100%;
-    
+    margin: 0 auto; /* Выравнивает контейнеры по центру */
+    max-width: var(--max-width); /* Устанавливает максимальную ширину контейнеров */
+    justify-content: space-between; /* Распределяет элементы по краям контейнера */
 }
 
 .h2 {
@@ -67,7 +78,7 @@ header, footer {
     width: 100%;
     height: 100%;
     display: flex;
-    max-width: 1600px; 
+    max-width: var(--max-width); /* Устанавливает максимальную ширину контейнеров 1600 пикселей */
     padding: 0 15px;
     margin: 10px auto;   
 }
@@ -113,7 +124,7 @@ nav a {
 }
 
 .sidebar-container {
-    width: 17%;
+    width: 25%;
     height: 100%;
     float: left;
     background-color: #cfd3b7; /* Цвет фона для контейнера сайдбара */
@@ -125,10 +136,10 @@ nav a {
 }
 
 .main-content-container {
-    width: 83%;
+    width: 75%;
     height: 100%;
     float: right;    
-    background-color: #dbdfcb; /* Цвет фона для контейнера основного содержимого */
+    background-color: #dee7ce; /* Цвет фона для контейнера основного содержимого */
     overflow: auto; /* для полос прокрутки */
     padding: 20px; /* Отступ для контейнера основного содержимого */
 
@@ -140,13 +151,13 @@ nav a {
 }
 
 .sidebar {
-    width: 200px;
+    width: 100%;
     padding: 20px;
     background-color: #cfd3b7;   
 }
 
 .sidebar h2 {
-    text-align: center;
+    text-align: left;
 }
 
 .sidebar-menu {

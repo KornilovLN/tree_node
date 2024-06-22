@@ -47,6 +47,56 @@ def copy_files(src_path, dest_path):
             shutil.copy(src_file_path, dest_file_path)
 
 
+def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files):
+    sidebar_links = ""
+    sidebar_links += f"<h1>{folder_name}:</h1>\n"
+
+    sidebar_links += f"<p>"
+    folder_path_rel = os.path.relpath(dest_path, dest_dir)    
+    sidebar_links += f"[<i>{folder_path_rel}</i>]\n"
+    sidebar_links += f"</p>"
+
+    sidebar_links += "<div>\n"
+
+    for link in next_links:
+        link_folder = os.path.splitext(link)[0]
+        sidebar_links += f'<a href="{link_folder}/{link}"><h3>{link_folder}</h3></a>\n'
+    
+    sidebar_links += f'<br>'
+    sidebar_links += f'<a href="{back_link}"><h3>Назад</h3></a>\n'
+    sidebar_links += f'<a href="{root_link}"><h3>На главную</h3></a>\n'
+    sidebar_links += f'<br>'
+
+    
+    if context_files:
+        sidebar_links += "<div style='margin-left: 20px;'>"
+        sidebar_links += "<h4>Файлы в папке:</h4>\n"
+        sidebar_links += f"<ul>\n"
+        for file in context_files:
+            sidebar_links += f"<li>{file}</li>\n"
+        sidebar_links += f"</ul>\n"    
+        sidebar_links += "</div>\n"
+
+
+    sidebar_links += "</div>\n"
+
+    return sidebar_links
+
+
+def create_next_links(next_links, folder_name):
+    links_html = ""
+
+    for link in next_links:
+        link_folder = os.path.splitext(link)[0]
+
+        if folder_name == ".":
+            links_html += f'<a href="{link_folder}/{link}"><h3>{link_folder}</h3></a>\n'
+        else:
+            links_html += f'<a href="{link_folder}/{link}"><h3>{link_folder}</h3></a>\n'
+
+    return links_html
+
+
 
 def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link, back_link, next_links):
     level = dest_path.count(os.sep) - dest_dir.count(os.sep)
@@ -59,7 +109,7 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
     full_path = os.path.relpath(dest_path, dest_dir)
 
     # Получаем список файлов в папке "context"
-    context_dir = os.path.join(dest_path, "context")
+    context_dir = os.path.join(dest_path, "context") if dest_path != dest_dir else os.path.join(dest_dir, "context")
     context_files = []
     if os.path.exists(context_dir):
         context_files = os.listdir(context_dir)
@@ -67,10 +117,21 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
     # Формируем HTML-код для отображения списка файлов
     context_files_html = ""
     if context_files:
-        context_files_html = "<div style='margin-left: 20px;'><h4>Файлы в папке context:</h4>\n"
+        context_files_html = "<div style='margin-left: 20px;'><h4>Файлы в папке:</h4>\n"
+        
+        context_files_html += f"<ul>\n"
         for file in context_files:
-            context_files_html += f"<p>{file}</p>\n"
+            context_files_html += f"<li>{file}</li>\n"
+        context_files_html += f"</ul>"
+
         context_files_html += "</div>"
+
+    # Формируем HTML-код для ссылок в сайдбаре
+    sidebar_links = generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files)
+
+    # Формируем HTML-код для ссылок в центральной панели
+    revers_content_links = f'<a href="{root_link}"><h3>На главную</h3></a>\n'
+    revers_content_links += f'<a href="{back_link}"><h3>Назад</h3></a><br>\n'
 
     print(f"context_files_html: {context_files_html}")
 
@@ -101,21 +162,22 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
 
         <div class="sidebar-container">
             <div class="sidebar">
-                <h3>Карта документа</h3>
+                {sidebar_links}                
             </div>
         </div>
 
         <div class="main-content-container">
             <div class="main-content">
                 <div>
-                    <h3>{folder_name}</h3>
-                    <p><i>{full_path}</i></p>
+                    <h1>{folder_name}</h1>
+                    <p><i>[{full_path}]</i></p>
                     <div>
-                        <!-- Тут ссылки на следующие подкаталоги (их может быть от 1-го до нескольких) -->
+                        <!-- Пока не решили - быть тут ссылкам или нет      
+                         {revers_content_links}                  
                          {next_links_html}
-                         {context_files_html}
-                        <!-- Тут ссылка на предыдущий (Назад) -->
-                        <!-- Тут ссылка в начало (На главную) -->
+                         
+                         {context_files_html}                        
+                        --> 
                     </div>
                 </div>
             </div>
@@ -136,19 +198,28 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
 </html>""")
 
 
+# Формируем HTML-код для отображения списка файлов
+def generate_sidebar_content(folder_name, full_path, next_links, context_files):
+    sidebar_content = f"<h1>{folder_name}</h1>\n"
+    sidebar_content += f"<p><i>[{full_path}]</i></p>\n"   
 
-def create_next_links(next_links, folder_name):
-    links_html = ""
+    sidebar_content += "<div>"
     for link in next_links:
-        link_folder = os.path.splitext(link)[0]
+        link_name = os.path.splitext(link)[0]
+        sidebar_content += f'<h3><a href="{link_name}/{link}">{link_name}</a></h3>\n'
+    
+    if context_files:
+    
+        sidebar_content += "<h4>Файлы в папке:</h4>\n"
 
-        if folder_name == ".":
-            links_html += f'<a href="{link_folder}/{link}"><h3>{link_folder}</h3></a><br>\n'
-        else:
-            links_html += f'<a href="{link_folder}/{link}"><h3>{link_folder}</h3></a><br>\n'
+        sidebar_content += f"<ul>\n"
+        for file in context_files:
+            sidebar_content += f"<li>{file}</li>\n"
+        sidebar_content += f"</ul>\n"
 
-    return links_html
+    sidebar_content += "</div>\n"
 
+    return sidebar_content
 
 
 def main():
@@ -162,9 +233,20 @@ def main():
     create_site_structure(src_dir, dest_dir)
 
     # Создаем папку "content" в корневой папке сайта и копируем туда файлы из корневой папки исходного каталога
-    root_content_dir = os.path.join(dest_dir, "content")
-    os.makedirs(root_content_dir, exist_ok=True)
-    copy_files(src_dir, root_content_dir)
+    root_context_dir = os.path.join(dest_dir, "context")
+    os.makedirs(root_context_dir, exist_ok=True)
+    copy_files(src_dir, root_context_dir)
+
+    # Вычисляем folder_name и full_path для корневой страницы
+    folder_name = "sunpp_docs"
+    full_path = os.path.basename(dest_dir)
+
+    # Получаем список файлов в папке "context"
+    root_context_dir = os.path.join(dest_dir, "context")
+    context_files = []
+    if os.path.exists(root_context_dir):
+        context_files = os.listdir(root_context_dir)
+
 
     # Создаем файл sunpp_docs.html в корневой папке сайта
     sunpp_docs_path = os.path.join(dest_dir, "sunpp_docs.html")
@@ -172,6 +254,10 @@ def main():
         next_folders = [f for f in os.listdir(src_dir) if os.path.isdir(os.path.join(src_dir, f))]
         next_links = [f"{folder}.html" for folder in next_folders]
         next_links_html = create_next_links(next_links, ".")
+
+        # Генерируем содержимое сайдбара
+        sidebar_content = generate_sidebar_content(folder_name, full_path, next_links, context_files)
+
         html_template = ("""<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -195,20 +281,20 @@ def main():
     </header>
 
     <div class="container">
-
+                         
         <div class="sidebar-container">
-            <div class="sidebar">
-                <h3>Карта документа</h3>
-            </div>            
-        </div>
+            <div  class="sidebar">
+                {sidebar_content}                      
+            </div>
+        </div>                     
 
         <div class="main-content-container">
             <div class="main-content">
                 <div>
-                    <h3>sunpp_docs</h3>
-                    <div>
-                        <!-- Тут ссылки на следующие подкаталоги (их может быть от 1-го до нескольких) -->
-                        {next_links_html}
+                    <div>            
+                        <h1>{folder_name}</h1>
+                         
+                        <p><i>[{full_path}]</i></p>                         
                     </div>
                 </div>
             </div>
@@ -228,8 +314,22 @@ def main():
 </body>
 </html>""")
 
-        file.write(html_template.format(next_links_html=next_links_html))
+       
 
+        #file.write(html_template.format(next_links_html=next_links_html))
+        file.write(html_template.format(
+            folder_name=folder_name,
+            full_path=full_path,
+            sidebar_content=sidebar_content
+        ))
+
+
+
+        '''
+        file.write(html_template
+                   .format(next_links_html=next_links_html,
+                           root_context_files_html=root_context_files_html))
+        '''
 #-------------------------------------------------------------------------------
 
     # Копируем папки styles, scripts и icons в корневую папку сайта
