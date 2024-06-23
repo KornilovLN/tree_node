@@ -210,11 +210,13 @@ def generate_sidebar_content(folder_name, full_path, next_links, context_files):
     
     if context_files:
     
-        sidebar_content += "<h4>Файлы в папке:</h4>\n"
+        sidebar_content += "<ul aria-label='Файлы в папке'>\n"
 
-        sidebar_content += f"<ul>\n"
         for file in context_files:
-            sidebar_content += f"<li>{file}</li>\n"
+            file_path = f"context/{file}"
+            #sidebar_content += f'<li><a href="{file_path}" target="content-frame" onclick="setTimeout(function() {{ resizeIframe(document.getElementsByName(\'content-frame\')[0]); }}, 100);">{file}</a></li>\n'
+            sidebar_content += f'<li><a href="{file_path}" >{file}</a></li>\n'
+            
         sidebar_content += f"</ul>\n"
 
     sidebar_content += "</div>\n"
@@ -258,6 +260,7 @@ def main():
         # Генерируем содержимое сайдбара
         sidebar_content = generate_sidebar_content(folder_name, full_path, next_links, context_files)
 
+
         html_template = ("""<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -267,6 +270,7 @@ def main():
     <meta http-equiv="Expires" content="0">
     <title>sunpp_docs</title>
     <link rel="stylesheet" href="styles/style.css">
+                  
 </head>
 <body>
     <header>
@@ -292,9 +296,10 @@ def main():
             <div class="main-content">
                 <div>
                     <div>            
-                        <h1>{folder_name}</h1>
-                         
-                        <p><i>[{full_path}]</i></p>                         
+                        <h1>{folder_name}</h1>                         
+                        <p><i>[{full_path}]</i></p> 
+                       
+
                     </div>
                 </div>
             </div>
@@ -311,10 +316,13 @@ def main():
             </nav>
         </div>
     </footer>
+                                        
 </body>
 </html>""")
 
-       
+        #iframe_src_path = "path_to_your_content.html"  # укажите путь к контенту iframe
+        #html_template = html_template.replace("your-content-url.html", iframe_src_path)
+
 
         #file.write(html_template.format(next_links_html=next_links_html))
         file.write(html_template.format(
@@ -323,13 +331,8 @@ def main():
             sidebar_content=sidebar_content
         ))
 
+            
 
-
-        '''
-        file.write(html_template
-                   .format(next_links_html=next_links_html,
-                           root_context_files_html=root_context_files_html))
-        '''
 #-------------------------------------------------------------------------------
 
     # Копируем папки styles, scripts и icons в корневую папку сайта
