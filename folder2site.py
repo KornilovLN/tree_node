@@ -1,5 +1,6 @@
 import os
 import shutil
+import html 
 
 from templates.template_start import PAGE_TEMPLATE_START
 from templates.template_dyno import PAGE_TEMPLATE_DYNO
@@ -94,6 +95,7 @@ def copy_files(src_path, dest_path):
     Returns:
         None
     """
+    """ 
     for file_name in os.listdir(src_path):
         # Формируем полный путь к файлу в исходной директории
         src_file_path = os.path.join(src_path, file_name)
@@ -103,6 +105,38 @@ def copy_files(src_path, dest_path):
         if os.path.isfile(src_file_path):
              # Копируем файл из исходной директории в целевую
             shutil.copy(src_file_path, dest_file_path)
+    """
+    for file_name in os.listdir(src_path):
+        src_file_path = os.path.join(src_path, file_name)
+        if os.path.isfile(src_file_path):
+            # Читаем содержимое файла
+            with open(src_file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                content = file.read()
+            
+            # Экранируем HTML-символы и оборачиваем содержимое в теги <pre>
+            escaped_content = html.escape(content)
+            html_content = f"""
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{file_name}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; }}
+        pre {{ background-color: #f0f0f0; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }}
+    </style>
+</head>
+<body>
+    <h1>{file_name}</h1>
+    <pre>{escaped_content}</pre>
+</body>
+</html>
+"""            
+            # Сохраняем новый HTML-файл
+            new_file_name = f"{file_name}.html"
+            dest_file_path = os.path.join(dest_path, new_file_name)
+            with open(dest_file_path, 'w', encoding='utf-8') as file:
+                file.write(html_content)
 
 
 
@@ -151,7 +185,7 @@ def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_lin
         sidebar_links += "<h4>Файлы в папке:</h4>\n"
         sidebar_links += f"<ul>\n"
         for file in context_files:
-            sidebar_links += f"<li>{file}</li>\n"
+            sidebar_links += f'<li><a href="context/{file}.html">{file}</a></li>\n'
         sidebar_links += f"</ul>\n"    
         sidebar_links += "</div>\n"
 
@@ -196,16 +230,16 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
     Создает HTML-файл для текущей директории.
 
     Args:
-        dest_path (str): Путь к текущей директории.
-        folder_name (str): Имя текущей папки.
-        dest_dir (str): Путь к корневой целевой директории.
-        html_file_path (str): Путь, где будет создан HTML-файл.
-        root_link (str): Ссылка на главную страницу.
-        back_link (str): Ссылка для возврата назад.
-        next_links (List[str]): Список ссылок на подразделы.
+    dest_path (str): Путь к текущей директории.
+    folder_name (str): Имя текущей папки.
+    dest_dir (str): Путь к корневой целевой директории.
+    html_file_path (str): Путь, где будет создан HTML-файл.
+    root_link (str): Ссылка на главную страницу.
+    back_link (str): Ссылка для возврата назад.
+    next_links (List[str]): Список ссылок на подразделы.
 
     Returns:
-        None
+    None
     """
     # Вычисляем уровень вложенности текущей директории
     level = dest_path.count(os.sep) - dest_dir.count(os.sep)
@@ -214,42 +248,26 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
     style_link = "../" * level + "styles/style.css"
     icon_link = "../" * level + "icons/ivl.png"
 
-     # Создаем HTML-код для ссылок на подразделы
-    next_links_html = create_next_links(next_links, folder_name)
-
     # Формируем полный путь к текущей папке
     full_path = os.path.relpath(dest_path, dest_dir)
 
     # Получаем список файлов в папке "context"
-    context_dir = os.path.join(dest_path, "context") if dest_path != dest_dir else os.path.join(dest_dir, "context")
+    context_dir = os.path.join(dest_path, "context")
     context_files = []
     if os.path.exists(context_dir):
-        context_files = os.listdir(context_dir)
-
-    # Формируем HTML-код для отображения списка файлов
-    context_files_html = ""
-    if context_files:
-        context_files_html = "<div style='margin-left: 20px;'><h4>Файлы в папке:</h4>\n"
-        
-        context_files_html += f"<ul>\n"
-        for file in context_files:
-            context_files_html += f"<li>{file}</li>\n"
-        context_files_html += f"</ul>"
-
-        context_files_html += "</div>"
+        context_files = [f for f in os.listdir(context_dir) if f.endswith('.html')]
 
     # Формируем HTML-код для ссылок в сайдбаре
     sidebar_links = generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files)
 
-    # Формируем HTML-код для ссылок в центральной панели
-    revers_content_links = f'<a href="{root_link}"><h3>На главную</h3></a>\n'
-    revers_content_links += f'<a href="{back_link}"><h3>Назад</h3></a><br>\n'
-
-    # Пока оставляем пустым, можно добавить позже
-    main_content = ""  
-
-
-    print(f"context_files_html: {context_files_html}")
+    # Формируем HTML-код для отображения содержимого файлов
+    main_content = ""
+    for file in context_files:
+        file_path = os.path.join(context_dir, file)
+        with open(file_path, 'r', encoding='utf-8') as f:
+            file_content = f.read()
+        main_content += f"<h2>{file[:-5]}</h2>\n"  # Убираем расширение .html из заголовка
+        main_content += file_content
 
     # Записываем сформированный HTML в файл
     with open(html_file_path, "w", encoding="utf-8") as file:
@@ -263,6 +281,7 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
             full_path=full_path,
             main_content=main_content
         ))
+
 
 
 
@@ -292,13 +311,10 @@ def generate_sidebar_content(folder_name, full_path, next_links, context_files):
         sidebar_content += f'<h3><a href="{link_name}/{link}">{link_name}</a></h3>\n'
     
     # Если есть файлы в текущей директории, добавляем их список
-    if context_files:    
+    if context_files:
         sidebar_content += "<ul aria-label='Файлы в папке'>\n"
-
         for file in context_files:
-            file_path = f"context/{file}"
-            sidebar_content += f'<li><a href="{file_path}" >{file}</a></li>\n'
-            
+            sidebar_content += f'<li><a href="context/{file}.html">{file}</a></li>\n'
         sidebar_content += f"</ul>\n"
     sidebar_content += "</div>\n"
 
