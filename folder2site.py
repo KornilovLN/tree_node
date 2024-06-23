@@ -1,6 +1,9 @@
 import os
 import shutil
 
+from templates.template_start import PAGE_TEMPLATE_START
+from templates.template_dyno import PAGE_TEMPLATE_DYNO
+
 
 
 def create_site_structure(src_dir, dest_dir):
@@ -249,90 +252,25 @@ def main():
     if os.path.exists(root_context_dir):
         context_files = os.listdir(root_context_dir)
 
-
     # Создаем файл sunpp_docs.html в корневой папке сайта
     sunpp_docs_path = os.path.join(dest_dir, "sunpp_docs.html")
+
+    # Определяем next_links
+    next_folders = [f for f in os.listdir(src_dir) if os.path.isdir(os.path.join(src_dir, f))]
+    next_links = [f"{folder}.html" for folder in next_folders]
+        
     with open(sunpp_docs_path, "w", encoding="utf-8") as file:
-        next_folders = [f for f in os.listdir(src_dir) if os.path.isdir(os.path.join(src_dir, f))]
-        next_links = [f"{folder}.html" for folder in next_folders]
-        next_links_html = create_next_links(next_links, ".")
-
-        # Генерируем содержимое сайдбара
         sidebar_content = generate_sidebar_content(folder_name, full_path, next_links, context_files)
-
-
-        html_template = ("""<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>sunpp_docs</title>
-    <link rel="stylesheet" href="styles/style.css">
-                  
-</head>
-<body>
-    <header>
-        <div class="container">
-            <img src="icons/ivl.png" alt="Логотип" />
-            <nav>
-                <ul>
-                    <li><a href="sunpp_docs.html"><h2>На главную</h2></a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div class="container">
-                         
-        <div class="sidebar-container">
-            <div  class="sidebar">
-                {sidebar_content}                      
-            </div>
-        </div>                     
-
-        <div class="main-content-container">
-            <div class="main-content">
-                <div>
-                    <div>            
-                        <h1>{folder_name}</h1>                         
-                        <p><i>[{full_path}]</i></p> 
-                       
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <footer>
-        <div class="container">
-            <nav>
-                <ul>
-                    <li><a href="sunpp_docs.html"><h2>На главную</h2></a></li>
-                </ul>
-            </nav>
-        </div>
-    </footer>
-                                        
-</body>
-</html>""")
-
-        #iframe_src_path = "path_to_your_content.html"  # укажите путь к контенту iframe
-        #html_template = html_template.replace("your-content-url.html", iframe_src_path)
-
-
-        #file.write(html_template.format(next_links_html=next_links_html))
-        file.write(html_template.format(
-            folder_name=folder_name,
+        file.write(PAGE_TEMPLATE_START.format(
+            title=folder_name,
+            style_link="styles/style.css",
+            icon_link="icons/ivl.png",
+            root_link="sunpp_docs.html",
+            back_link="",
+            sidebar_content=sidebar_content,
             full_path=full_path,
-            sidebar_content=sidebar_content
+            main_content=""  # Пока оставляем пустым
         ))
-
-            
-
 #-------------------------------------------------------------------------------
 
     # Копируем папки styles, scripts и icons в корневую папку сайта
