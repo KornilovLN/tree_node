@@ -33,13 +33,8 @@ PAGE_TEMPLATE_DYNO = """<!DOCTYPE html>
                 <div>
                     <h1>{folder_name}</h1>
                     <p><i>[{full_path}]</i></p>
-                    <div>
-                        <!-- Пока не решили - быть тут ссылкам или нет      
-                         {revers_content_links}                  
-                         {next_links_html}
-                         
-                         {context_files_html}                        
-                        --> 
+                    <div>                        
+                        {main_content}                        
                     </div>
                 </div>
             </div>

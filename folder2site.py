@@ -50,6 +50,7 @@ def copy_files(src_path, dest_path):
             shutil.copy(src_file_path, dest_file_path)
 
 
+
 def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files):
     sidebar_links = ""
     sidebar_links += f"<h1>{folder_name}:</h1>\n"
@@ -84,6 +85,7 @@ def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_lin
     sidebar_links += "</div>\n"
 
     return sidebar_links
+
 
 
 def create_next_links(next_links, folder_name):
@@ -136,69 +138,23 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
     revers_content_links = f'<a href="{root_link}"><h3>На главную</h3></a>\n'
     revers_content_links += f'<a href="{back_link}"><h3>Назад</h3></a><br>\n'
 
+    main_content = ""  # Пока оставляем пустым, можно добавить позже
+
+
     print(f"context_files_html: {context_files_html}")
 
     with open(html_file_path, "w", encoding="utf-8") as file:
-        file.write(f"""<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>{folder_name}</title>
-    <link rel="stylesheet" href="{style_link}">
-</head>
-<body>
-    <header>
-        <div class="container">
-            <img src="{icon_link}" alt="Логотип" />
-            <nav>
-                <ul>
-                    <li><a href="{root_link}"><h2>На главную</h2></a></li>
-                    <li><a href="{back_link}"><h2>Назад</h2></a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-    <div class="container">
+        file.write(PAGE_TEMPLATE_DYNO.format(
+            folder_name=folder_name,
+            style_link=style_link,
+            icon_link=icon_link,
+            root_link=root_link,
+            back_link=back_link,
+            sidebar_links=sidebar_links,
+            full_path=full_path,
+            main_content=main_content
+        ))
 
-        <div class="sidebar-container">
-            <div class="sidebar">
-                {sidebar_links}                
-            </div>
-        </div>
-
-        <div class="main-content-container">
-            <div class="main-content">
-                <div>
-                    <h1>{folder_name}</h1>
-                    <p><i>[{full_path}]</i></p>
-                    <div>
-                        <!-- Пока не решили - быть тут ссылкам или нет      
-                         {revers_content_links}                  
-                         {next_links_html}
-                         
-                         {context_files_html}                        
-                        --> 
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <footer>
-        <div class="container">
-            <nav>
-                <ul>
-                    <li><a href="{root_link}"><h2>На главную</h2></a></li>
-                    <li><a href="{back_link}"><h2>Назад</h2></a></li>
-                </ul>
-            </nav>
-        </div>
-    </footer>
-</body>
-</html>""")
 
 
 # Формируем HTML-код для отображения списка файлов
@@ -217,7 +173,6 @@ def generate_sidebar_content(folder_name, full_path, next_links, context_files):
 
         for file in context_files:
             file_path = f"context/{file}"
-            #sidebar_content += f'<li><a href="{file_path}" target="content-frame" onclick="setTimeout(function() {{ resizeIframe(document.getElementsByName(\'content-frame\')[0]); }}, 100);">{file}</a></li>\n'
             sidebar_content += f'<li><a href="{file_path}" >{file}</a></li>\n'
             
         sidebar_content += f"</ul>\n"
@@ -225,6 +180,7 @@ def generate_sidebar_content(folder_name, full_path, next_links, context_files):
     sidebar_content += "</div>\n"
 
     return sidebar_content
+
 
 
 def main():
