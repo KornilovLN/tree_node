@@ -43,6 +43,7 @@ def copy_directory(src_path, dest_path, dest_dir):
     Returns:
         None
     """
+    print(f"Обработка директории: {src_path}")
     # Создаем HTML-файл для каждой поддиректории
     for entry in os.listdir(src_path):
         src_entry_path = os.path.join(src_path, entry)
@@ -144,6 +145,10 @@ def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_lin
     Returns:
         str: HTML-код для боковой панели навигации.
     """    
+    print(f"Генерация ссылок для: {folder_name}")
+    print(f"Количество next_links: {len(next_links)}")
+    print(f"Количество context_files: {len(context_files)}")
+
     sidebar_links = ""
     sidebar_links += f"<h1>{folder_name}:</h1>\n"
 
@@ -245,6 +250,10 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
     # Формируем HTML-код для ссылок в сайдбаре
     sidebar_links = generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files)
 
+    print(f"Создание файла: {html_file_path}")
+    print(f"Количество next_links: {len(next_links)}")
+    print(f"Количество context_files: {len(context_files)}")
+
     # Записываем сформированный HTML в файл
     with open(html_file_path, "w", encoding="utf-8") as file:
         file.write(PAGE_TEMPLATE_DYNO.format(
@@ -283,13 +292,16 @@ def generate_sidebar_content(folder_name, full_path, next_links, context_files):
     for link in next_links:
         link_name = os.path.splitext(link)[0]
         sidebar_content += f'<h3><a href="{link_name}/{link}">{link_name}</a></h3>\n'
+
     
     # Если есть файлы в текущей директории, добавляем их список
     if context_files:
+        sidebar_content += "<h3>Файлы в папке:</h3>\n"
         sidebar_content += "<ul aria-label='Файлы в папке'>\n"
         for file in context_files:
-            original_name = os.path.splitext(file)[0]  # Удаляем расширение .html
-            sidebar_content += f'<li><a href="context/{file}">{original_name}</a></li>\n'
+            original_name = os.path.splitext(file)[0]  # Удаляем расширение .html            
+            #sidebar_content += f'<li><a href="context/{file}">{original_name}</a></li>\n'
+            sidebar_content += f'<li><a href="#" onclick="loadContent(\'context/{file}\'); return false;">{original_name}</a></li>\n'
         sidebar_content += f"</ul>\n"
     sidebar_content += "</div>\n"
 
@@ -343,7 +355,7 @@ def main():
     # Определяем next_links
     next_folders = [f for f in os.listdir(src_dir) if os.path.isdir(os.path.join(src_dir, f))]
     next_links = [f"{folder}.html" for folder in next_folders]
-        
+
     # Создаем содержимое главной страницы    
     with open(sunpp_docs_path, "w", encoding="utf-8") as file:
         sidebar_content = generate_sidebar_content(folder_name, full_path, next_links, context_files)
@@ -351,13 +363,31 @@ def main():
             title=folder_name,
             style_link="styles/style.css",
             icon_link="icons/ivl.png",
+            script_link="scripts/script.js",  # Добавляем ссылку на скрипт
             root_link="sunpp_docs.html",
             back_link="",
             sidebar_content=sidebar_content,
             full_path=full_path,
-            main_content=""  # Пока оставляем пустым
+            main_content="<div id='content'></div>"
         ))
 #-------------------------------------------------------------------------------
+    # Создаем файл index.html для перенаправления
+    index_html_path = os.path.join(dest_dir, "index.html")
+    index_html_content = """<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0;url=sunpp_docs.html">
+    <title>Перенаправление</title>
+</head>
+<body>
+    <p>Если вы не были перенаправлены автоматически, пожалуйста, перейдите на <a href="sunpp_docs.html">главную страницу</a>.</p>
+</body>
+</html>"""
+
+    with open(index_html_path, "w", encoding="utf-8") as index_file:
+        index_file.write(index_html_content)
+
 
     # Копируем папки styles, scripts и icons в корневую папку сайта
     styles_dest = os.path.join(dest_dir, "styles")
@@ -374,6 +404,8 @@ def main():
     if os.path.exists(icons_dest):
         shutil.rmtree(icons_dest)
     shutil.copytree(os.path.join(os.getcwd(), "icons"), icons_dest)
+
+    
 
 if __name__ == "__main__":
     main()

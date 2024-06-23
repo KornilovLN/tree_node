@@ -37,6 +37,7 @@ PAGE_TEMPLATE_START = """<!DOCTYPE html>
     <meta http-equiv="Expires" content="0">
     <title>{title}</title>
     <link rel="stylesheet" href="{style_link}">
+    <script src="{script_link}"></script>
 </head>
 <body>
     <header>
