@@ -138,7 +138,45 @@ def copy_files(src_path, dest_path):
             with open(dest_file_path, 'w', encoding='utf-8') as file:
                 file.write(html_content)
 
+def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files):
+    sidebar_links = ""
+    sidebar_links += f"<h1>{folder_name}:</h1>\n"
 
+    sidebar_links += f"<p>"
+    folder_path_rel = os.path.relpath(dest_path, dest_dir)    
+    sidebar_links += f"[<i>{folder_path_rel}</i>]\n"
+    sidebar_links += f"</p>"
+
+    sidebar_links += "<div>\n"
+
+    # Добавляем ссылки на подразделы
+    if next_links:
+        sidebar_links += "<h3>Подразделы:</h3>\n"
+        for link in next_links:
+            link_folder = os.path.splitext(link)[0]
+            sidebar_links += f'<a href="{link_folder}/{link}"><h3>{link_folder}</h3></a>\n'
+
+    # Добавляем ссылки на файлы в текущей папке
+    if context_files:
+        sidebar_links += "<h3>Файлы в папке:</h3>\n"
+        sidebar_links += f"<ul>\n"
+        for file in context_files:
+            original_name = os.path.splitext(file)[0]  # Удаляем расширение .html
+            sidebar_links += f'<li><a href="#" onclick="console.log(\'Link clicked\'); loadContent(\'context/{file}\'); return false;">{original_name}</a></li>\n'
+
+            #sidebar_links += f'<li><a href="#" onclick="loadContent(\'context/{file}\'); return false;">{original_name}</a></li>\n'
+        sidebar_links += f"</ul>\n"    
+
+    sidebar_links += f'<br>'
+    if back_link:
+        sidebar_links += f'<a href="{back_link}"><h3>Назад</h3></a>\n'
+    sidebar_links += f'<a href="{root_link}"><h3>На главную</h3></a>\n'
+
+    sidebar_links += "</div>\n"
+
+    return sidebar_links
+
+'''
 def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files):
     sidebar_links = ""
     sidebar_links += f"<h1>{folder_name}:</h1>\n"
@@ -174,7 +212,7 @@ def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_lin
     sidebar_links += "</div>\n"
 
     return sidebar_links
-
+'''
 '''
 def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files):
     """
@@ -347,6 +385,8 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
             main_content=main_content
         ))
 '''
+
+'''
 def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link, back_link, next_links):
     level = dest_path.count(os.sep) - dest_dir.count(os.sep)
 
@@ -386,7 +426,40 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
             full_path=full_path,
             main_content=main_content
         ))
+'''
 
+def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link, back_link, next_links):
+    level = dest_path.count(os.sep) - dest_dir.count(os.sep)
+
+    style_link = "../" * level + "styles/style.css"
+    icon_link = "../" * level + "icons/ivl.png"
+    script_link = "../" * level + "scripts/script.js"
+
+    # Формируем полный путь к текущей папке
+    full_path = os.path.relpath(dest_path, dest_dir)
+
+    # Получаем список файлов в папке "context"
+    context_dir = os.path.join(dest_path, "context")
+    context_files = []
+    if os.path.exists(context_dir):
+        context_files = [f for f in os.listdir(context_dir) if f.endswith('.html')]
+
+    # Формируем HTML-код для ссылок в сайдбаре
+    sidebar_links = generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_link, next_links, context_files)
+
+    # Записываем сформированный HTML в файл
+    with open(html_file_path, "w", encoding="utf-8") as file:
+        file.write(PAGE_TEMPLATE_DYNO.format(
+            folder_name=folder_name,
+            style_link=style_link,
+            icon_link=icon_link,
+            script_link=script_link,
+            root_link=root_link,
+            back_link=back_link,
+            sidebar_links=sidebar_links,
+            full_path=full_path,
+            main_content="<div id='content'></div>"
+        ))
 
 # Формируем HTML-код для отображения списка файлов
 def generate_sidebar_content(folder_name, full_path, next_links, context_files):
