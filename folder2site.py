@@ -111,9 +111,24 @@ def copy_files(src_path, dest_path):
 <head>
     <meta charset="UTF-8">
     <title>{file_name}</title>
+    <!--
     <style>
         body {{ font-family: Arial, sans-serif; }}
         pre {{ background-color: #f0f0f0; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }}
+    </style>
+    -->
+    <style>
+        body {{ 
+            font-family: Arial, sans-serif; 
+        }}
+        pre {{ 
+            background-color: #f0f0f0; 
+            padding: 10px; 
+            white-space: pre-wrap; 
+            word-wrap: break-word;
+            font-size: 14px;  /* Увеличенный размер шрифта */
+            line-height: 1.5; /* Улучшенная читаемость */
+        }}
     </style>
 </head>
 <body>
