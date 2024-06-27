@@ -42,7 +42,9 @@ PAGE_TEMPLATE_START = """<!DOCTYPE html>
 <body>
     <header>
         <div class="container">
-            <img src="{icon_link}" alt="Логотип" />
+            <div class="logo">
+                <img src="{icon_link}" alt="Логотип" />
+            </div>
             <nav>
                 <ul>
                     <li><a href="{root_link}"><h2>На главную</h2></a></li>

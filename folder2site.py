@@ -44,10 +44,25 @@ def copy_directory(src_path, dest_path, dest_dir):
         None
     """
     print(f"Обработка директории: {src_path}")
+    
+    """
+    # Игнорируем директорию .git
+    if os.path.basename(src_path) == '.git':
+        print("Пропускаем директорию .git")
+        return
+    """
+
     # Создаем HTML-файл для каждой поддиректории
     for entry in os.listdir(src_path):
         src_entry_path = os.path.join(src_path, entry)
         dest_entry_path = os.path.join(dest_path, entry)
+
+        # Пропускаем .git директорию
+        """
+        if entry == '.git':
+            print(f"Пропускаем {entry}")
+            continue
+        """
 
         if os.path.isdir(src_entry_path):
             # Создаем целевую директорию
@@ -250,8 +265,23 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
     level = dest_path.count(os.sep) - dest_dir.count(os.sep)
 
     style_link = "../" * level + "styles/style.css"
-    icon_link = "../" * level + "icons/ivl.png"
+    icon_link = "../" * level + "icons/logo_big.png"
     script_link = "../" * level + "scripts/script.js"
+
+    # Формируем список родительских папок ############################
+    parent_folders = dest_path.split(os.sep)
+    parent_folders = parent_folders[:-1]  # Удаляем имя текущей папки
+
+    # Формируем HTML-код для цепочки ссылок на родительские узлы
+    parent_links = ""
+    level = dest_path.count(os.sep) - dest_dir.count(os.sep)
+    for i, folder in enumerate(parent_folders):
+        if i == 0:
+            root_link = "../" * level + "sunpp_docs.html"
+            parent_links += f'<a href="{root_link}">sunpp_docs</a>'
+        else:
+            relative_path = "../" * (level - i) + f"{folder}.html"
+            parent_links += f' / <a href="{relative_path}">{folder}</a>'
 
     # Формируем полный путь к текущей папке
     full_path = os.path.relpath(dest_path, dest_dir)
@@ -280,6 +310,7 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
             back_link=back_link,
             sidebar_links=sidebar_links,
             full_path=full_path,
+            parent_links=parent_links,  # Добавляем цепочку ссылок на родительские узлы
             main_content="<div id='content'></div>"
         ))
 
@@ -377,7 +408,7 @@ def main():
         file.write(PAGE_TEMPLATE_START.format(
             title=folder_name,
             style_link="styles/style.css",
-            icon_link="icons/ivl.png",
+            icon_link="icons/logo_big.png",
             script_link="scripts/script.js",  # Добавляем ссылку на скрипт
             root_link="sunpp_docs.html",
             back_link="",
