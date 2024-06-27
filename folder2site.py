@@ -1,3 +1,42 @@
+"""
+Модуль для генерации HTML-страниц сайта на основе структуры папок.
+
+Функции:
+- create_html_file(dest_path, html_file_path, folder_name, dest_dir):
+    Создает HTML-файл для заданной папки, используя шаблон PAGE_TEMPLATE_DYNO.
+
+    Параметры:
+    - dest_path: Полный путь к текущей папке
+    - html_file_path: Путь к создаваемому HTML-файлу
+    - folder_name: Имя текущей папки
+    - dest_dir: Корневая директория сайта
+
+    Шаблон PAGE_TEMPLATE_DYNO содержит следующие плейсхолдеры:
+    - {folder_name}: Имя текущей папки/страницы
+    - {style_link}: Ссылка на файл стилей CSS
+    - {icon_link}: Ссылка на иконку сайта
+    - {script_link}: Ссылка на файл скриптов JavaScript
+    - {root_link}: Ссылка на главную страницу сайта
+    - {back_link}: Ссылка для возврата на предыдущую страницу
+    - {parent_links}: HTML-код для цепочки ссылок на родительские узлы
+    - {sidebar_links}: HTML-код для боковой панели навигации
+    - {full_path}: Полный путь к текущей странице
+    - {main_content}: Основное содержимое страницы
+
+- main():
+    Главная функция, которая запускает процесс генерации сайта.
+
+    Параметры:
+    - src_dir: Путь к исходной директории с папками
+    - dest_dir: Путь к целевой директории для сайта
+
+Запуск:
+    python folder2site.py <src_dir> <dest_dir>
+
+Пример:
+    python folder2site.py source_folders site
+"""
+
 import os
 import shutil
 import html 
