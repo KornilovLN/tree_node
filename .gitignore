@@ -1,9 +1,17 @@
 # игнорировать каталоги:
 
 sunpp_commented/
+sunpp_comment/
+
+Docker_simple/
 
 tech/
 
 first/
 
+source_texts/
+
+
 sunpp_docs/
+
+Docker_simple_docs/

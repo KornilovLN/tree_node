@@ -38,6 +38,7 @@
 """
 
 import os
+import sys
 import shutil
 import html 
 
@@ -45,8 +46,15 @@ from templates.template_start import PAGE_TEMPLATE_START
 from templates.template_dyno import PAGE_TEMPLATE_DYNO
 
 
+# Путь к исходной директории
+#src_dir = "sunpp_comment"
+src_dir = "Docker_simple"
 
-def create_site_structure(src_dir, dest_dir):
+# Путь к целевой директории
+#dest_dir = "sunpp_docs"
+dest_dir = "Docker_simple_docs"
+
+def create_site_structure(src_dir):
     """
     Функция создает структуру сайта из исходной директории.
         использует рекурсивный обход дерева директорий.
@@ -61,15 +69,18 @@ def create_site_structure(src_dir, dest_dir):
     Raises:
         OSError: Ошибка при создании структуры сайта.
     """
+
+    global dest_dir  # Объявляем, что используем глобальную переменную dest_dir
+
     try:
         os.makedirs(dest_dir, exist_ok=True)
-        copy_directory(src_dir, dest_dir, dest_dir)
+        copy_directory(src_dir, dest_dir, dest_dir) ###, src_dir)
     except OSError as e:
         print(f"Ошибка при создании структуры сайта: {e}")
+        #print("Ошибка при создании структуры сайта: {}".format(e))
 
 
-
-def copy_directory(src_path, dest_path, dest_dir):
+def copy_directory(src_path, dest_path, dest_dir): #, src_dir):
     """
     Рекурсивно копирует директорию и
     создает HTML-файлы для каждой поддиректории.
@@ -83,25 +94,25 @@ def copy_directory(src_path, dest_path, dest_dir):
         None
     """
     print(f"Обработка директории: {src_path}")
+    #print("Ошибка при создании структуры сайта: {}",{src_path})
     
-    """
+    
     # Игнорируем директорию .git
     if os.path.basename(src_path) == '.git':
         print("Пропускаем директорию .git")
         return
-    """
+
 
     # Создаем HTML-файл для каждой поддиректории
     for entry in os.listdir(src_path):
         src_entry_path = os.path.join(src_path, entry)
         dest_entry_path = os.path.join(dest_path, entry)
 
-        # Пропускаем .git директорию
-        """
+        # Пропускаем .git директорию        
         if entry == '.git':
-            print(f"Пропускаем {entry}")
+            print(f"Пропускаем директорию {src_entry_path}")
             continue
-        """
+        
 
         if os.path.isdir(src_entry_path):
             # Создаем целевую директорию
@@ -117,24 +128,33 @@ def copy_directory(src_path, dest_path, dest_dir):
             parent_dir = os.path.dirname(dest_entry_path)
             parent_folder_name = os.path.basename(parent_dir)
 
+            # Получаем имя корневой директории целевого сайта
+            root_dir_name = os.path.basename(dest_dir)  ### добавил
+
             # Формируем ссылки для возвратов назад и в  главную
             back_link = f"../{parent_folder_name}.html" if parent_folder_name else ""
-            root_link = "../" * (dest_entry_path.count(os.sep) - dest_dir.count(os.sep)) + "sunpp_docs.html"
+            root_link = "../" * (dest_entry_path.count(os.sep) - dest_dir.count(os.sep)) + f"{root_dir_name}.html"
+            #root_link = "../" * (dest_entry_path.count(os.sep) - dest_dir.count(os.sep)) + "sunpp_docs.html"
 
             # Получаем список поддиректорий
             next_folders = [f for f in os.listdir(src_entry_path) if os.path.isdir(os.path.join(src_entry_path, f))]
             next_links = [f"{folder_name}.html" for folder_name in next_folders]
-            
+            #next_folders = [f for f in os.listdir(src_entry_path) if os.path.isdir(os.path.join(src_entry_path, f)) and f != '.git']
+            #next_links = [f"{folder_name}.html" for folder_name in next_folders]
+
+
              # Создаем HTML-файл для текущей директории
             create_html_file(dest_entry_path, folder_name, dest_dir, html_file_path, root_link, back_link, next_links)
-            
+            #create_html_file(dest_entry_path, folder_name, dest_dir, html_file_path, root_link, back_link, next_links, src_dir)
+
             # Создаем директорию для контекстных файлов
             # и копируем файлы в контекстную директорию
             context_dir = os.path.join(dest_entry_path, "context")
             os.makedirs(context_dir, exist_ok=True)
             copy_files(src_entry_path, context_dir)
 
-             # Рекурсивно обрабатываем поддиректории
+            # Рекурсивно обрабатываем поддиректории
+            # Рекурсивно обрабатываем поддиректории, но не .git
             copy_directory(src_entry_path, dest_entry_path, dest_dir)
 
 
@@ -165,16 +185,7 @@ def copy_files(src_path, dest_path):
 <head>
     <meta charset="UTF-8">
     <title>{file_name}</title>
-    <!--
     <style>
-        body {{ font-family: Arial, sans-serif; }}
-        pre {{ background-color: #f0f0f0; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }}
-    </style>
-    -->
-    <style>
-        body {{ 
-            font-family: Arial, sans-serif; 
-        }}
         pre {{ 
             background-color: #f0f0f0; 
             padding: 10px; 
@@ -228,12 +239,24 @@ def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_lin
 
     sidebar_links += "<div>\n"
 
+    '''
     # Добавляем ссылки на подразделы
     if next_links:
         sidebar_links += "<h3>Подразделы:</h3>\n"
         for link in next_links:
             link_folder = os.path.splitext(link)[0]
             sidebar_links += f'<a href="{link_folder}/{link}"><h3>{link_folder}</h3></a>\n'
+    '''
+
+    # Добавляем ссылки на подразделы, но игнорируем .git
+    #next_links = [link for link in next_links if not link.startswith('.git')]
+    if next_links:
+        sidebar_links += "<h3>Подразделы:</h3>\n"
+        sidebar_links += "<ul>\n"
+        for link in next_links:
+            link_folder = os.path.splitext(link)[0]
+            sidebar_links += f'<li><a href="{link_folder}/{link}"><h4>{link_folder}</h4></a></li>\n'
+        sidebar_links += "</ul>\n"
 
     # Добавляем ссылки на файлы в текущей папке
     if context_files:
@@ -241,17 +264,20 @@ def generate_sidebar_links(dest_path, folder_name, dest_dir, root_link, back_lin
         sidebar_links += f"<ul>\n"
         for file in context_files:
             original_name = os.path.splitext(file)[0]  # Удаляем расширение .html
-            sidebar_links += f'<li><a href="#" onclick="console.log(\'Link clicked\'); loadContent(\'context/{file}\'); return false;">{original_name}</a></li>\n'
-
-            #sidebar_links += f'<li><a href="#" onclick="loadContent(\'context/{file}\'); return false;">{original_name}</a></li>\n'
+            sidebar_links += f'<li><a href="#" onclick="console.log(\'Link clicked\'); loadContent(\'context/{file}\'); return false;">{original_name}</a></li>\n' 
         sidebar_links += f"</ul>\n"    
 
     sidebar_links += f'<br>'
+
+    sidebar_links += f"<ul>\n"
     if back_link:
         sidebar_links += f'<a href="{back_link}"><h3>Назад</h3></a>\n'
     sidebar_links += f'<a href="{root_link}"><h3>На главную</h3></a>\n'
+    sidebar_links += f"</ul>\n"
 
     sidebar_links += "</div>\n"
+
+
 
     return sidebar_links
 
@@ -284,7 +310,7 @@ def create_next_links(next_links, folder_name):
     return links_html
 
 
-
+#def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link, back_link, next_links, src_dir):
 def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link, back_link, next_links):
     """
     Создает HTML-файл для текущей директории.
@@ -301,23 +327,30 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
     Returns:
         None
     """
+    global src_dir
+
     level = dest_path.count(os.sep) - dest_dir.count(os.sep)
 
     style_link = "../" * level + "styles/style.css"
-    icon_link = "../" * level + "icons/logo_big.png"
+    icon_link = "../" * level + "icons/logo_big_2.png"
     script_link = "../" * level + "scripts/script.js"
 
     # Формируем список родительских папок ############################
     parent_folders = dest_path.split(os.sep)
     parent_folders = parent_folders[:-1]  # Удаляем имя текущей папки
 
+    # Получаем имя корневой директории целевого сайта
+    root_dir_name = os.path.basename(dest_dir)
+
     # Формируем HTML-код для цепочки ссылок на родительские узлы
     parent_links = ""
     level = dest_path.count(os.sep) - dest_dir.count(os.sep)
     for i, folder in enumerate(parent_folders):
         if i == 0:
-            root_link = "../" * level + "sunpp_docs.html"
-            parent_links += f'<a href="{root_link}">sunpp_docs</a>'
+            #root_link = "../" * level + "sunpp_docs.html"
+            #parent_links += f'<a href="{root_link}">sunpp_docs</a>'
+            root_link = "../" * level + f"{root_dir_name}.html"
+            parent_links += f'<a href="{root_link}">{root_dir_name}</a>'
         else:
             relative_path = "../" * (level - i) + f"{folder}.html"
             parent_links += f' / <a href="{relative_path}">{folder}</a>'
@@ -340,7 +373,8 @@ def create_html_file(dest_path, folder_name, dest_dir, html_file_path, root_link
 
     # Записываем сформированный HTML в файл
     with open(html_file_path, "w", encoding="utf-8") as file:
-        file.write(PAGE_TEMPLATE_DYNO.format(
+        file.write(PAGE_TEMPLATE_DYNO.format(  
+            src_dir = src_dir,          
             folder_name=folder_name,
             style_link=style_link,
             icon_link=icon_link,
@@ -370,14 +404,13 @@ def generate_sidebar_content(folder_name, full_path, next_links, context_files):
     # Добавляем заголовок с именем текущей папки
     sidebar_content = f"<h1>{folder_name}</h1>\n"
     # Добавляем полный путь к текущей папке
-    sidebar_content += f"<p><i>[{full_path}]</i></p>\n"   
+    sidebar_content += f"<p><i>[{full_path}]</i></p>\n"  
 
     sidebar_content += "<div>"
     # Добавляем ссылки на подразделы
     for link in next_links:
         link_name = os.path.splitext(link)[0]
         sidebar_content += f'<h3><a href="{link_name}/{link}">{link_name}</a></h3>\n'
-
     
     # Если есть файлы в текущей директории, добавляем их список
     if context_files:
@@ -385,7 +418,6 @@ def generate_sidebar_content(folder_name, full_path, next_links, context_files):
         sidebar_content += "<ul aria-label='Файлы в папке'>\n"
         for file in context_files:
             original_name = os.path.splitext(file)[0]  # Удаляем расширение .html            
-            #sidebar_content += f'<li><a href="context/{file}">{original_name}</a></li>\n'
             sidebar_content += f'<li><a href="#" onclick="loadContent(\'context/{file}\'); return false;">{original_name}</a></li>\n'
         sidebar_content += f"</ul>\n"
     sidebar_content += "</div>\n"
@@ -410,14 +442,23 @@ def main():
         7 Последние две строки (if __name__ == "__main__":) обеспечивают,
             что функция main() будет вызвана только если скрипт запущен напрямую, а не импортирован как модуль.
     """
-    # Путь к исходной директории
-    src_dir = "sunpp_commented"
+    global dest_dir  # Объявляем, что используем глобальную переменную dest_dir
 
     # Путь к целевой директории
-    dest_dir = "sunpp_docs"
+    #dest_dir = "sunpp_docs"
+
+    '''
+    # Получаем аргументы командной строки
+    if len(sys.argv) != 3:
+        print("Использование: python folder2site.py <src_dir> <dest_dir>")
+        sys.exit(1)
+
+    src_dir = sys.argv[1]
+    dest_dir = sys.argv[2]
+    '''
 
     # Создаем структуру сайта
-    create_site_structure(src_dir, dest_dir)
+    create_site_structure(src_dir) #, dest_dir)
 
     # Создаем папку "content" в корневой папке сайта и копируем туда файлы из корневой папки исходного каталога
     root_context_dir = os.path.join(dest_dir, "context")
@@ -425,7 +466,7 @@ def main():
     copy_files(src_dir, root_context_dir)
 
     # Вычисляем folder_name и full_path для корневой страницы
-    folder_name = "sunpp_docs"
+    folder_name = src_dir ###"sunpp_docs"
     full_path = os.path.basename(dest_dir)
 
     # Получаем список файлов в папке "context"
@@ -434,22 +475,43 @@ def main():
     if os.path.exists(root_context_dir):
         context_files = os.listdir(root_context_dir)
 
+    # Получаем имя корневой директории целевого сайта
+    root_dir_name = os.path.basename(dest_dir)
+
     # Создаем файл sunpp_docs.html в корневой папке сайта
-    sunpp_docs_path = os.path.join(dest_dir, "sunpp_docs.html")
+    #sunpp_docs_path = os.path.join(dest_dir, "sunpp_docs.html")
+    main_page_path = os.path.join(dest_dir, f"{root_dir_name}.html")
 
     # Определяем next_links
-    next_folders = [f for f in os.listdir(src_dir) if os.path.isdir(os.path.join(src_dir, f))]
+    #next_folders = [f for f in os.listdir(src_dir) if os.path.isdir(os.path.join(src_dir, f))]
+    #next_links = [f"{folder}.html" for folder in next_folders]
+    next_folders = [f for f in os.listdir(src_dir) if os.path.isdir(os.path.join(src_dir, f)) and f != '.git']
     next_links = [f"{folder}.html" for folder in next_folders]
 
+
     # Создаем содержимое главной страницы    
-    with open(sunpp_docs_path, "w", encoding="utf-8") as file:
+    with open(main_page_path, "w", encoding="utf-8") as file:
         sidebar_content = generate_sidebar_content(folder_name, full_path, next_links, context_files)
+
+        # Не добавляем ссылки "На главную" и "Назад" в боковую панель на корневой странице
+        #sidebar_content = sidebar_content.replace('<a href="sunpp_docs.html"><h3>На главную</h3></a>', '')
+        sidebar_content = sidebar_content.replace(f'<a href="{root_dir_name}.html"><h3>На главную</h3></a>', '')
+
+        sidebar_content = sidebar_content.replace('<a href=""><h3>Назад</h3></a>', '')
+
+        # Удаляем строку с полным путем к текущей папке для корневой страницы
+        if dest_dir ==  folder_name:
+            sidebar_content = sidebar_content.replace(f'<p><i>[{full_path}]</i></p>', '')
+
+
         file.write(PAGE_TEMPLATE_START.format(
+            src_dir=src_dir,
             title=folder_name,
             style_link="styles/style.css",
-            icon_link="icons/logo_big.png",
+            icon_link="icons/logo_big_2.png",
             script_link="scripts/script.js",  # Добавляем ссылку на скрипт
-            root_link="sunpp_docs.html",
+            #root_link="sunpp_docs.html",
+            root_link=f"{root_dir_name}.html",
             back_link="",
             sidebar_content=sidebar_content,
             full_path=full_path,

@@ -46,12 +46,17 @@ PAGE_TEMPLATE_START = """<!DOCTYPE html>
             <div class="logo">
                 <img src="{icon_link}" alt="Логотип" />
             </div>
+            <h1>Документ: {src_dir}</h1>
+
+            <!--
             <nav>
                 <ul>
                     <li><a href="{root_link}"><h2>На главную</h2></a></li>
                     <li><a href="{back_link}"><h2>Назад</h2></a></li>
                 </ul>
             </nav>
+            -->
+
         </div>
     </header>
     <div class="container">
@@ -63,8 +68,8 @@ PAGE_TEMPLATE_START = """<!DOCTYPE html>
         <div class="main-content-container">
             <div class="main-content">
                 <div>
-                    <h1>{title}</h1>
-                    <p><i>[{full_path}]</i></p>
+                    <h2>Раздел: {title}</h2>
+                    <!-- <p><i>[{full_path}]</i></p> -->
                     <div>
                         {main_content}
                     </div>

@@ -48,12 +48,17 @@ PAGE_TEMPLATE_DYNO = """<!DOCTYPE html>
             <div class="logo">
                 <img src="{icon_link}" alt="Логотип" />
             </div>
-            <nav>                
+            <h1>Документ: {src_dir}</h1>
+
+            <!--            
+            <nav>                        
                 <ul>
                 <li><h2><a href="{root_link}">На главную</a></h2></li>
                 <li><h2><a href="{back_link}">Назад</a></h2></li>
-            </ul>
+                </ul>               
             </nav>
+            -->
+
         </div>
     </header>
     <div class="container">
@@ -67,7 +72,7 @@ PAGE_TEMPLATE_DYNO = """<!DOCTYPE html>
         <div class="main-content-container">
             <div class="main-content">
                 <div>
-                    <h1>{folder_name}</h1>
+                    <h2>Раздел: {folder_name}</h2>
                     <!-- <p><i>[{full_path}]</i></p> -->
                     <p><i><h3>[ {parent_links} ]</h3></i></p>
                     <div>                        
