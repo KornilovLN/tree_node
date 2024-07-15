@@ -524,13 +524,13 @@ def main():
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0;url=sunpp_docs.html">
+    <meta http-equiv="refresh" content="0;url={}.html">
     <title>Перенаправление</title>
 </head>
 <body>
-    <p>Если вы не были перенаправлены автоматически, пожалуйста, перейдите на <a href="sunpp_docs.html">главную страницу</a>.</p>
+    <p>Если вы не были перенаправлены автоматически, пожалуйста, перейдите на <a href="{}.html">главную страницу</a>.</p>
 </body>
-</html>"""
+</html>""".format(root_dir_name, root_dir_name)
 
     with open(index_html_path, "w", encoding="utf-8") as index_file:
         index_file.write(index_html_content)
