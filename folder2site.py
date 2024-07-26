@@ -47,12 +47,12 @@ from templates.template_dyno import PAGE_TEMPLATE_DYNO
 
 
 # Путь к исходной директории
-#src_dir = "sunpp_comment"
-src_dir = "Docker_simple"
+src_dir = "sunpp_comment"
+#src_dir = "Docker_simple"
 
 # Путь к целевой директории
-#dest_dir = "sunpp_docs"
-dest_dir = "Docker_simple_docs"
+dest_dir = "sunpp_docs"
+#dest_dir = "Docker_simple_docs"
 
 def create_site_structure(src_dir):
     """

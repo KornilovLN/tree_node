@@ -1,5 +1,7 @@
 # игнорировать каталоги:
 
+add_commit_push.sh
+
 sunpp_commented/
 sunpp_comment/
 
